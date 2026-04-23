@@ -26,7 +26,7 @@ def dashboard():
     if usernames:
         conn_u = get_users_connection()
         for uname in usernames:
-            u = conn_u.execute("SELECT id FROM users WHERE username = '?'", (uname,)).fetchone()
+            u = conn_u.execute("SELECT id FROM users WHERE username = ?", (uname,)).fetchone()
             if u:
                 user_ids[uname] = u['id']
         conn_u.close()
@@ -70,7 +70,7 @@ def company_detail(company_id):
     if request.method == 'POST':
         comment = request.form['comment']
         user = session.get('username')
-        conn.execute("INSERT INTO comments (company_id, user, comment) VALUES (?, ?, '?')", (str(company_id), user,comment))
+        conn.execute("INSERT INTO comments (company_id, user, comment) VALUES (?, ?, ?)", (str(company_id), user,comment))
         conn.commit()
         conn.close()
         flash("Comment added successfully.", "success")
@@ -101,7 +101,7 @@ def register_company():
         description = request.form['description']
         owner = request.form.get('owner', session.get('username'))
         conn = get_data_connection()
-        conn.execute("INSERT INTO companies (name, description, owner) VALUES (?, '?', '?')", (company_name, description, owner))
+        conn.execute("INSERT INTO companies (name, description, owner) VALUES (?, ?, ?)", (company_name, description, owner))
         conn.commit()
         conn.close()
         flash("Company registered successfully.", "success")
@@ -124,7 +124,7 @@ def edit_company(company_id):
     if request.method == 'POST':
         new_name = request.form['company_name']
         new_description = request.form['description']
-        conn.execute("UPDATE companies SET name = '?', description = '?' WHERE id = ?", (new_name, new_description, str(company_id)))
+        conn.execute("UPDATE companies SET name = '?', description = ? WHERE id = ?", (new_name, new_description, str(company_id)))
         conn.commit()
         conn.close()
         flash("Company updated successfully.", "success")
